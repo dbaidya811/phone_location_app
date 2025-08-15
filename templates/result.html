@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="text-center mb-4">
+        <h3>Phone Number Information</h3>
+    </div>
+    
+    <div class="row mb-4">
+        <div class="col-md-6 offset-md-3">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title">Details for: +{{ country_code }}{{ national_number }}</h5>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item">
+                            <strong>Phone Number:</strong> +{{ country_code }}{{ national_number }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Country Code:</strong> +{{ country_code }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>National Number:</strong> {{ national_number }}
+                        </li>
+                        {% if derived_circle %}
+                        <li class="list-group-item">
+                            <strong>Circle/State (India):</strong> {{ derived_circle }}
+                        </li>
+                        {% endif %}
+                        <li class="list-group-item">
+                            <strong>Location:</strong> {{ location if location else 'Not available' }}
+                        </li>
+                        <li class="list-group-item">
+                            <strong>Service Provider:</strong> {{ service_provider if service_provider else 'Not available' }}
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-12">
+            <h4 class="text-center mb-3">Approximate Location</h4>
+            <div class="map-container" style="height: 400px; width: 100%;">
+                <iframe src="{{ url_for('static', filename='map.html') }}" style="border:0; width:100%; height:400px;" loading="lazy"></iframe>
+            </div>
+        </div>
+    </div>
+    
+    <div class="text-center mt-4">
+        <a href="{{ url_for('index') }}" class="btn btn-primary">Search Another Number</a>
+    </div>
+
+    <hr class="my-4" />
+    <div class="row">
+        <div class="col-md-8 offset-md-2">
+            <div class="card">
+                <div class="card-header bg-success text-white">Live Location (with consent)</div>
+                <div class="card-body">
+                    <p>Ask the person to open this link on their phone and allow location permission:</p>
+                    <div class="input-group mb-3">
+                        <input type="text" class="form-control" id="shareLink" value="{{ share_url }}" readonly>
+                        <button class="btn btn-outline-secondary" type="button" onclick="navigator.clipboard.writeText(document.getElementById('shareLink').value)">Copy</button>
+                        <a class="btn btn-success" href="{{ share_url }}" target="_blank">Open</a>
+                    </div>
+                    <p>View live updates here:</p>
+                    <a class="btn btn-outline-primary" href="{{ live_url }}" target="_blank">Open Live Map</a>
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

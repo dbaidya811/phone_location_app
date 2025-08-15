@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <div class="text-center mb-4">
+        <h3>Phone Number Location Finder</h3>
+        <p class="lead">Enter a phone number with country code to find its location</p>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+    
+    <form method="POST" action="{{ url_for('index') }}" class="mb-4">
+        <div class="input-group mb-3">
+            <span class="input-group-text">+</span>
+            <input type="text" 
+                   class="form-control form-control-lg" 
+                   name="phone_number" 
+                   placeholder="Example: 8801712345678" 
+                   value="{{ request.form.phone_number if request.form.phone_number else '' }}"
+                   required>
+            <button class="btn btn-primary" type="submit">Find Location</button>
+        </div>
+        <div class="form-text">
+            <p>Enter phone number with country code (e.g., 880 for Bangladesh, 91 for India, 1 for USA)</p>
+        </div>
+    </form>
+    
+    <div class="mt-5">
+        <h4>How to use:</h4>
+        <ol>
+            <li>Enter the phone number with country code (e.g., 8801712345678 for Bangladesh)</li>
+            <li>Click "Find Location" button</li>
+            <li>View the location on the map and details below</li>
+        </ol>
+        
+        <div class="alert alert-info mt-4">
+            <strong>Note:</strong> This is a demonstration application. The location shown is approximate and 
+            based on the phone number's country code and area code. For precise location, you would need 
+            to use a commercial phone number geolocation service.
+        </div>
+    </div>
+{% endblock %}

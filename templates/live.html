@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="mb-3">Live Map</h4>
+<p class="text-muted">This map updates automatically when the sharer moves.</p>
+<div id="map" style="height: 450px; width: 100%;" class="mb-3"></div>
+<pre id="status" class="p-2 bg-light border rounded">Waiting for first location...</pre>
+
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+<script type="text/javascript">
+(function(){
+  'use strict';
+  const TOKEN = "{{ token|e }}";
+  const statusEl = document.getElementById('status');
+  const apiUrl = '/api/loc/' + TOKEN;
+
+  // Init map (world view)
+  const map = L.map('map').setView([20.5937, 78.9629], 4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 19,
+    attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  let marker = null;
+
+  function updateMap(lat, lng){
+    const pos = [lat, lng];
+    if(!marker){
+      marker = L.marker(pos).addTo(map);
+      map.setView(pos, 15);
+    } else {
+      marker.setLatLng(pos);
+    }
+  }
+
+  function poll(){
+    fetch(apiUrl)
+      .then(function(r){ return r.json(); })
+      .then(function(d){
+        if(d && d.ok && d.loc){
+          const lat = d.loc.lat, lng = d.loc.lng;
+          const ts = d.loc.ts ? new Date(d.loc.ts * 1000).toLocaleString() : '';
+          statusEl.textContent = 'Last update: ' + ts + ' | ' + lat.toFixed(6) + ', ' + lng.toFixed(6);
+          updateMap(lat, lng);
+        } else {
+          statusEl.textContent = 'Waiting for first location...';
+        }
+      })
+      .catch(function(){ statusEl.textContent = 'Network error while polling.'; });
+  }
+
+  poll();
+  setInterval(poll, 3000);
+})();
+</script>
+{% endblock %}

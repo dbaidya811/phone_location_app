@@ -1,0 +1,155 @@
+/* Typography */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap');
+
+/* Corporate palette */
+:root {
+    --brand: #1f3a8a;          /* Deep blue */
+    --brand-2: #2563eb;        /* Blue accent */
+    --accent: #10b981;         /* Emerald */
+    --muted: #64748b;          /* Slate */
+    --text: #0f172a;           /* Very dark */
+    --bg: #ffffff;             /* White */
+    --bg-soft: #f8fafc;        /* Soft gray */
+}
+
+body {
+    font-family: 'Poppins', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    color: var(--text);
+    background: var(--bg);
+}
+
+.card {
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    box-shadow: 0 6px 18px rgba(2, 6, 23, 0.06);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+.card-header {
+    border-radius: 14px 14px 0 0 !important;
+    padding: 1.25rem 1.5rem;
+}
+
+.form-control:focus {
+    border-color: var(--brand-2);
+    box-shadow: 0 0 0 0.25rem rgba(37, 99, 235, 0.15);
+}
+
+.btn-primary {
+    padding: 0.6rem 1.4rem;
+    font-weight: 600;
+    letter-spacing: .2px;
+    background-color: var(--brand-2);
+    border-color: var(--brand-2);
+}
+
+.btn-primary:hover {
+    filter: brightness(.98);
+}
+
+.map-container {
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Corporate header color if using .bg-primary */
+.card-header.bg-primary {
+    background-color: var(--brand) !important;
+}
+
+.alert {
+    border-radius: 10px;
+}
+
+.list-group-item {
+    border-left: none;
+    border-right: none;
+}
+
+.list-group-item:first-child {
+    border-top: none;
+}
+
+.list-group-item:last-child {
+    border-bottom: none;
+}
+
+/* ---- Modern colorful theme additions ---- */
+/* Keep legacy tokens for gradient use if needed */
+:root {
+    --primary: #1f3a8a;        /* aligns to brand */
+    --primary-light: #2563eb;
+    --secondary: #10b981;
+    --accent-amber: #f59e0b;
+    --text-slate: #334155;
+}
+
+/* already set body above */
+
+.card {
+    transition: transform .25s ease, box-shadow .25s ease;
+}
+
+.card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.15);
+}
+
+/* solid brand header defined above */
+
+/* primary button defined above */
+
+.btn-primary:hover {
+    filter: brightness(0.98);
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    border: 2px solid var(--primary);
+    color: var(--primary);
+}
+
+.btn-outline-primary:hover {
+    background: var(--primary);
+    color: #fff;
+}
+
+.form-control, .form-select {
+    border-radius: 10px;
+}
+
+/* focus state refined above */
+
+/* Result info cards */
+.result-card {
+    background: #fff;
+    border-left: 4px solid var(--brand);
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    margin-bottom: 1rem;
+}
+
+/* Map */
+.map-container {
+    margin-top: 1rem;
+}
+
+/* Alerts: make them colorful and soft */
+.alert-success { background: #ecfdf5; color: #065f46; border: 1px solid #bbf7d0; }
+.alert-danger  { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+.alert-warning { background: #fffbeb; color: #92400e; border: 1px solid #fde68a; }
+.alert-info    { background: #eff6ff; color: #1e3a8a; border: 1px solid #bfdbfe; }
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+    .container { padding-left: 1rem; padding-right: 1rem; }
+    .card { border-radius: 12px; }
+    .btn { width: 100%; margin-bottom: .5rem; }
+    .map-container iframe, .map-container #map { width: 100% !important; height: 320px !important; }
+}
+
+@media (max-width: 420px) {
+    .card-header h2, .card-header h1, .card-header .h4 { font-size: 1.1rem; }
+    .btn { padding: .6rem 1rem; }
+}

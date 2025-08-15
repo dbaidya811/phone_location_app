@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="mb-3">Share Your Live Location</h4>
+<p>This page will ask for GPS permission and send your location to the requester in real-time.</p>
+<div class="alert alert-info">Keep this page open to continue sharing.</div>
+<pre id="status" class="p-3 bg-light border rounded">Waiting for permission...</pre>
+<script type="text/javascript">
+(function(){
+  'use strict';
+  const SHARE_TOKEN = "{{ token|e }}";
+  const endpoint = '/api/loc/' + SHARE_TOKEN;
+  const statusEl = document.getElementById('status');
+
+  function postLocation(lat, lng){
+    fetch(endpoint, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({lat: lat, lng: lng})
+    })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d.ok){ throw new Error('Server rejected'); }
+    })
+    .catch(function(err){
+      console.error(err);
+    });
+  }
+
+  if(!('geolocation' in navigator)){
+    statusEl.textContent = 'Geolocation is not supported on this device.';
+    return;
+  }
+
+  statusEl.textContent = 'Requesting permission...';
+  var opts = { enableHighAccuracy: true, maximumAge: 5000, timeout: 20000 };
+  navigator.geolocation.watchPosition(function(pos){
+      var latitude = pos.coords.latitude;
+      var longitude = pos.coords.longitude;
+      var accuracy = pos.coords.accuracy;
+      statusEl.textContent = 'Sending: ' + latitude.toFixed(6) + ', ' + longitude.toFixed(6) + ' (±' + Math.round(accuracy) + 'm)';
+      postLocation(latitude, longitude);
+    }, function(err){
+      statusEl.textContent = 'Location error: ' + err.message;
+    }, opts);
+})();
+</script>
+{% endblock %}
