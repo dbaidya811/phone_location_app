@@ -1,4 +1,8 @@
 Flask==2.0.1
+# Pin Werkzeug < 3 because Flask 2.0.x uses werkzeug.urls.url_quote
+Werkzeug<3
+# Pin Click < 8.1 for best compatibility with Flask 2.0.x
+click<8.1
 phonenumbers==8.12.55
 folium==0.12.1
 python-dotenv==0.19.0
