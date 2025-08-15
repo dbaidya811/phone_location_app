@@ -4,3 +4,4 @@ folium==0.12.1
 python-dotenv==0.19.0
 pycountry==23.12.11
 geopy==2.3.0
+gunicorn
