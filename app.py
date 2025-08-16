@@ -26,10 +26,11 @@ if os.path.exists(DATA_PATH):
         INDIA_PREFIX_CIRCLES = {}
 
 def get_india_circle(national_number: str):
-    # Try longest prefixes first
-    for length in (5, 4, 3):
-        if len(national_number) >= length:
-            pref = national_number[:length]
+    # Try longest prefixes first (supports 6..3 digits)
+    s = str(national_number)
+    for length in (6, 5, 4, 3):
+        if len(s) >= length:
+            pref = s[:length]
             if pref in INDIA_PREFIX_CIRCLES:
                 return INDIA_PREFIX_CIRCLES[pref]
     return None

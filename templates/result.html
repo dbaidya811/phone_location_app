@@ -20,11 +20,10 @@
                         <li class="list-group-item">
                             <strong>National Number:</strong> {{ national_number }}
                         </li>
-                        {% if derived_circle %}
                         <li class="list-group-item">
-                            <strong>Circle/State (India):</strong> {{ derived_circle }}
+                            <strong>Circle/State (India):</strong>
+                            {{ derived_circle if derived_circle else 'Not available' }}
                         </li>
-                        {% endif %}
                         <li class="list-group-item">
                             <strong>Location:</strong> {{ location if location else 'Not available' }}
                         </li>
