@@ -1,0 +1,58 @@
+{% extends 'base.html' %}
+{% block title %}Capturing IP...{% endblock %}
+{% block content %}
+<style>
+  /* Hide the global banner header only on this page */
+  .card-header { display: none !important; }
+  /* Reduce outer spacing for a more seamless redirect page */
+  .container.mt-5 { margin-top: 1rem !important; }
+  .card { box-shadow: none; border: 0; }
+  .card-body { padding-top: .5rem; }
+</style>
+<div class="container mt-4">
+  <div class="card">
+    <div class="card-body">
+      <h3 class="card-title">Preparing redirect…</h3>
+      <p class="mb-2">Please wait a moment....</p>
+      <p class="text-muted mb-0"><small>If this page doesn't continue automatically, <a id="fallbackLink" href="{{ target_url }}">click here</a>.</small></p>
+    </div>
+  </div>
+</div>
+
+<!-- Embed config as data-* to avoid inline Jinja in JS -->
+<div id="capCfg" data-post-url="{{ post_url }}" data-target-url="{{ target_url }}" hidden></div>
+
+<script>
+(function(){
+  var cfgEl = document.getElementById('capCfg');
+  var postUrl = cfgEl.getAttribute('data-post-url');
+  var targetUrl = cfgEl.getAttribute('data-target-url');
+
+  function postAndGo(ip){
+    fetch(postUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ ip: ip || '' })
+    }).catch(function(){ /* ignore */ })
+      .finally(function(){
+        window.location.replace(targetUrl);
+      });
+  }
+
+  // Safety timer: proceed even if ipify fails or blocked
+  var safety = setTimeout(function(){ postAndGo(''); }, 2500);
+
+  // Try to get public IP from ipify
+  fetch('https://api.ipify.org?format=json', { cache: 'no-store' })
+    .then(function(r){ return r.ok ? r.json() : {}; })
+    .then(function(j){
+      try { clearTimeout(safety); } catch(e){}
+      postAndGo(j && j.ip ? String(j.ip) : '');
+    })
+    .catch(function(){
+      try { clearTimeout(safety); } catch(e){}
+      postAndGo('');
+    });
+})();
+</script>
+{% endblock %}

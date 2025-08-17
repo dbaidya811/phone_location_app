@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block content %}
+<h4 class="mb-3">IP Finder - Captures</h4>
+<p>Share link: <a href="{{ share_link }}" target="_blank">{{ share_link }}</a></p>
+<p>Redirect target: <a href="{{ target_url }}" target="_blank">{{ target_url }}</a></p>
+
+{% if hits and hits|length > 0 %}
+  <div class="table-responsive">
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th>Time</th>
+          <th>IP Address</th>
+          <th>Approx Location</th>
+          <th>Latitude</th>
+          <th>Longitude</th>
+          <th>Note</th>
+          <th>User Agent</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for h in hits %}
+        <tr>
+          <td>{{ h.time_str }}</td>
+          <td>{{ h.ip }}</td>
+          <td>{{ (h.city ~ ', ' if h.city) ~ (h.region ~ ', ' if h.region) ~ (h.country if h.country) }}</td>
+          <td>{% if h.lat is not none %}{{ h.lat }}{% else %}-{% endif %}</td>
+          <td>
+            {% if h.lon is not none %}
+              {{ h.lon }}
+              {% if h.lat is not none %}
+                <a href="https://www.google.com/maps?q={{ h.lat }},{{ h.lon }}" target="_blank" class="ms-2">Map</a>
+              {% endif %}
+            {% else %}-{% endif %}
+          </td>
+          <td>{{ h.note if h.note else '' }}</td>
+          <td class="text-truncate" style="max-width: 280px;" title="{{ h.ua }}">{{ h.ua }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% else %}
+  <div class="alert alert-info">No captures yet. Share the link above and refresh this page.</div>
+{% endif %}
+
+{% if latest_loc %}
+  <hr class="my-4" />
+  <h5>Latest location ({{ latest_loc.ip }})</h5>
+  <ul class="list-group mb-3">
+    <li class="list-group-item"><strong>IP:</strong> {{ latest_loc.ip }}</li>
+    <li class="list-group-item"><strong>Latitude:</strong> {{ latest_loc.lat }}</li>
+    <li class="list-group-item"><strong>Longitude:</strong> {{ latest_loc.lon }}</li>
+  </ul>
+  <div id="ipMap"
+       style="height: 420px; width: 100%;"
+       class="mb-3"
+       data-lat="{{ latest_loc.lat }}"
+       data-lon="{{ latest_loc.lon }}"
+       data-label="{{ (latest_loc.city ~ ', ' if latest_loc.city else '') ~ (latest_loc.region ~ ', ' if latest_loc.region else '') ~ (latest_loc.country if latest_loc.country else '') }}">
+  </div>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin=""/>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script>
+    (function(){
+      var el = document.getElementById('ipMap');
+      var lat = parseFloat(el.dataset.lat);
+      var lon = parseFloat(el.dataset.lon);
+      if(!Number.isNaN(lat) && !Number.isNaN(lon)){
+        var map = L.map('ipMap').setView([lat, lon], 12);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          maxZoom: 19,
+          attribution: '&copy; OpenStreetMap contributors'
+        }).addTo(map);
+        var label = el.dataset.label || '';
+        var marker = L.marker([lat, lon]).addTo(map);
+        marker.bindPopup((label || 'Approximate location') + '<br>{{ latest_loc.time_str }}');
+      }
+    })();
+  </script>
+{% endif %}
+{% endblock %}
